@@ -7,6 +7,7 @@ from . import preprocessor
 from . import tokenizer
 from . import vectorizer
 from .utils import PairCorpus
+from .utils import paircorpus_to_word_context
 
 __all__ = ['db',
            'engine',
@@ -14,5 +15,6 @@ __all__ = ['db',
            'preprocessor',
            'tokenizer',
            'vectorizer',
-           'PairCorpus'
+           'PairCorpus',
+           'paircorpus_to_word_context'
           ]

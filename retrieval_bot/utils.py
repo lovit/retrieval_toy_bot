@@ -1,3 +1,7 @@
+from collections import defaultdict
+from scipy.sparse import csr_matrix
+from scipy.io import mmwrite
+
 class PairCorpus:
 
     def __init__(self, corpus_path, iter_pair=True, 
@@ -41,3 +45,27 @@ class PairCorpus:
 
         if self.verbose:
             print('\ryielding was done{}'.format(' '*40), flush=True)
+
+def paircorpus_to_word_context(vectorizer, corpus):
+    cooccurrence = defaultdict(lambda: defaultdict(int))
+
+    corpus.iter_pair = True
+    for send, reply in corpus:
+        send = vectorizer.encode_a_doc_to_bow(send)
+        reply = vectorizer.encode_a_doc_to_bow(reply)
+        for send_term in send:
+            for reply_term in reply:
+                cooccurrence[send_term][reply_term] += 1
+
+    rows = []
+    cols = []
+    data = []
+
+    for send_term, reply_terms in cooccurrence.items():
+        for reply_term, count in reply_terms.items():
+            rows.append(send_term)
+            cols.append(reply_term)
+            data.append(count)
+
+    word_context = csr_matrix((data, (rows, cols)))
+    return word_context
